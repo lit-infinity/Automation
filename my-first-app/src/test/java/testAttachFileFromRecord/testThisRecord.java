@@ -1,0 +1,36 @@
+package testAttachFileFromRecord;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import attachFileFromRecord.ThisRecord;
+
+public class testThisRecord extends ThisRecord {
+	
+	 @BeforeClass
+	    public void init() throws Exception {
+	        setup();       // Browser open and open the login page
+	        validLogin();  // Login only ONCE before all tests
+	        Contactlisting();
+	        hoverAndClickEmail();
+	        clickAttachIcon();
+	        verifyPopupAndTabs();
+	        
+	    }
+	 
+	 @Test(priority=1)
+	 public void filelisting()throws InterruptedException {
+//		 verifyFileListDisplayed();
+//		 verifyDownloadIcon();
+		 verifyPreviewIcon();
+		 
+	 }
+	    
+	  @AfterClass
+	    public void teardown() {
+	        tearDown();
+	    }
+
+
+}
