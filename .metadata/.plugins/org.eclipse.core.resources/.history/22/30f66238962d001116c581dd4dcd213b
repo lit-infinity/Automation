@@ -1,0 +1,28 @@
+package attachFileFromRecord;
+
+import java.util.List;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+public class ThisRecord extends AttachFromRecordNavigation{
+	
+	private final By FileListing = By.xpath("//div[@class='attach-file-list-container']");
+	private final By Allfilerows	 = By.xpath("//attach-file-list-item[@class='attach-file-list-item']");	
+	
+	
+	public void verifyFileListDisplayed() {
+		
+		WebElement parentContainer =driver.findElement(FileListing);
+		System.out.println("find the filelist element");
+		
+		List<WebElement> allFileRows =parentContainer.findElements(Allfilerows);
+	
+		int count = allFileRows.size();
+		System.out.println("Total file found "+ count);
+		
+	}
+
+	
+	
+
+}

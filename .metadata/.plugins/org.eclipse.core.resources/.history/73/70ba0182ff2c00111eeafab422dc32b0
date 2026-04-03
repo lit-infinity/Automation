@@ -1,0 +1,101 @@
+package attachFileFromRecord;
+
+import java.time.Duration;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+
+import contact.contactlisting;
+
+public class AttachFromRecordNavigation extends contactlisting {
+	
+	private final By Email =By.xpath("(//a[@title='Click to send email'])[1]");
+	private final By Attachicon = By.xpath("//button[@id='attachFiles-1']");
+	private final By Addfilefromrecord = By.xpath("//*[contains(text(),'Attach files from record')]");
+	private final By Modelpopup			=By.xpath("//h4[contains(text(),'Attach files')]");
+	
+	
+
+	protected WebDriverWait wait;
+	public AttachFromRecordNavigation() {
+        wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+    }
+
+	
+	public void hoverAndClickEmail() throws InterruptedException {
+
+	    WebElement Emailadd = driver.findElement(Email);
+	    Thread.sleep(500);
+	    Emailadd.click();
+	    System.out.println("Clicked on the email address");
+	    Thread.sleep(2000);
+	}
+	
+		
+	public void clickAttachIcon() throws InterruptedException {
+		
+		WebElement attachicon = driver.findElement(Attachicon);
+	    WebElement svgInsideBtn = attachicon.findElement(By.tagName("svg"));
+	    svgInsideBtn.click();
+	    System.out.println("Clicked the attach icon");
+	    
+//	    wait.until(ExpectedConditions.visibilityOfElementLocated(Addfilefromrecord));
+		driver.findElement(Addfilefromrecord).click();
+		System.out.println("Clicked the Add file from record");
+		Thread.sleep(3000);		
+	}
+	
+	public void verifyPopupAndTabs() throws InterruptedException {
+
+	    // Step 1 - Wait for popup using JavaScript executor
+	    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+	    
+	    wait.until(ExpectedConditions.presenceOfElementLocated(
+	        By.tagName("ngb-modal-window")
+	    ));
+	    
+	    Thread.sleep(2000); // small wait for Angular to finish rendering
+	    
+	    // Step 2 - Find popup
+	    WebElement popup = driver.findElement(By.tagName("ngb-modal-window"));
+	    
+	    // Step 3 - Verify header text
+	    WebElement header = popup.findElement(
+	        By.xpath(".//h4[contains(text(),'Attach files')]")
+	    );
+	    Assert.assertTrue(header.isDisplayed(), "Attach files popup is not visible");
+	    System.out.println("Popup verified: " + header.getText().trim());
+
+	    // Step 4 - Verify 3 tabs
+	    WebElement thisRecord = popup.findElement(
+	        By.xpath(".//button[contains(text(),'This Record')]")
+	    );
+	    WebElement assocDeals = popup.findElement(
+	        By.xpath(".//button[contains(text(),'Associated Deals')]")
+	    );
+	    WebElement assocTickets = popup.findElement(
+	        By.xpath(".//button[contains(text(),'Associated Tickets')]")
+	    );
+
+	    Assert.assertTrue(thisRecord.isDisplayed(), "This Record tab not visible");
+	    Assert.assertTrue(assocDeals.isDisplayed(), "Associated Deals tab not visible");
+	    Assert.assertTrue(assocTickets.isDisplayed(), "Associated Tickets tab not visible");
+	    System.out.println("All 3 tabs verified successfully");
+
+	    // Step 5 - Verify default active tab is This Record
+	    String activeClass = thisRecord.getAttribute("class");
+	    Assert.assertTrue(activeClass.contains("active"), 
+	        "This Record is not the default active tab");
+	    System.out.println("Default tab verified: This Record is active");
+	}
+	
+
+	  	
+
+}

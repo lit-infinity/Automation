@@ -1,0 +1,133 @@
+package attachFileFromRecord;
+
+import java.util.List;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.testng.Assert;
+
+public class ThisRecord extends AttachFromRecordNavigation{
+	
+	private final By FileListing = By.xpath("//div[@class='attach-file-list-container']");
+	private final By Allfilerows	 = By.xpath("//attach-file-list-item[@class='attach-file-list-item']");	
+	private final By Filename 		= By.xpath("//div[@class ='file-name']");
+	private final By Date =By.xpath("//span[@class='meta-item'][1]");
+	private final By Size= By.xpath("//span[@class='meta-item'][2]");
+	private final By Uploader =By.xpath("//span[@class='meta-item'][3]");
+	
+	
+
+	
+	public void verifyFileListDisplayed() {
+		
+		WebElement parentContainer =driver.findElement(FileListing);
+		System.out.println("find the filelist element");
+		
+		List<WebElement> allFileRows =parentContainer.findElements(Allfilerows);
+	
+		int count = allFileRows.size();
+		System.out.println("Total file found "+ count);
+		
+		if(count>0) {
+			for(WebElement rowdata : allFileRows){
+			WebElement file_name =	rowdata.findElement(Filename);
+			WebElement date 	= rowdata.findElement(Date);
+			WebElement size =	rowdata.findElement(Size);
+			WebElement uploader =	rowdata.findElement(Uploader);
+			
+			// Get text values
+		    String fileNameText = file_name.getText().trim();
+		    String dateText     = date.getText().trim();
+		    String sizeText     = size.getText().trim();
+		    String uploaderText = uploader.getText().trim();
+		    
+		    Assert.assertFalse(fileNameText.isEmpty(), "File name is empty");
+		    Assert.assertFalse(dateText.isEmpty(), "Date&time is empty");
+		    Assert.assertFalse(sizeText.isEmpty(), "Size is empty");
+		    Assert.assertFalse(uploaderText.isEmpty(), "Uploader name is empty");
+		    
+		    System.out.println("File Name : " + fileNameText);
+		    System.out.println("Date      : " + dateText);
+		    System.out.println("Size      : " + sizeText);
+		    System.out.println("Uploader  : " + uploaderText);
+		    System.out.println("---------------------------");
+		    
+		 // -----------------------------------------------
+		 // FILE TYPE ICON VERIFICATION
+		 // -----------------------------------------------
+
+		 // Step 1 - Get file extension from file name
+		 String extension = "";
+		 if (fileNameText.contains(".")) {
+		     extension = fileNameText
+		             .substring(fileNameText.lastIndexOf(".") + 1)
+		             .toLowerCase()
+		             .trim();
+		 }
+
+		 // Step 2 - Find icon element inside row
+		 WebElement iconElement = rowdata.findElement(By.xpath(".//span[contains(@class,'icon-file-')]"));
+
+		 // Step 3 - Get icon class attribute
+		 String iconClass = iconElement.getAttribute("class").toLowerCase();
+
+		 // Step 4 - Match extension with expected icon class
+		 switch (extension) {
+
+		     // PDF
+		     case "pdf":
+		         Assert.assertTrue(iconClass.contains("icon-file-pdf"),
+		             "Wrong icon for PDF file: " + fileNameText);
+		         break;
+
+		     // Images
+		     case "jpg":
+		     case "jpeg":
+		     case "png":
+		     case "webp":
+		     case "gif":
+		         Assert.assertTrue(iconClass.contains("icon-file-image"),
+		             "Wrong icon for Image file: " + fileNameText);
+		         break;
+
+		     // Spreadsheets
+		     case "xlsx":
+		     case "csv":
+		         Assert.assertTrue(iconClass.contains("icon-file-xls"),
+		             "Wrong icon for Spreadsheet file: " + fileNameText);
+		         break;
+
+		     // Word / Documents
+		     case "docx":
+		     case "doc":
+		     case "odt":
+		     case "ods":
+		     case "odp":
+		         Assert.assertTrue(iconClass.contains("icon-file-doc"),
+		             "Wrong icon for Document file: " + fileNameText);
+		         break;
+
+		     // Presentations
+		     case "pptx":
+		     case "ppt":
+		         Assert.assertTrue(iconClass.contains("icon-file-ppt"),
+		             "Wrong icon for Presentation file: " + fileNameText);
+		         break;
+
+		     default:
+		         System.out.println("Unknown extension: " + extension + " — skipping icon check");
+		         break;
+		 }
+
+		 System.out.println("Icon verified for : " + fileNameText + " (" + extension + ")");
+		 System.out.println("---------------------------");
+
+				
+			}
+		}
+		
+	}
+
+	
+	
+
+}

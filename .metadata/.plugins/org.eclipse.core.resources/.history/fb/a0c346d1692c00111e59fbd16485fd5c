@@ -1,0 +1,28 @@
+package testAttachFileFromRecord;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import attachFileFromRecord.AttachFromRecordNavigation;
+
+public class testAttachFromRecordNavigation extends AttachFromRecordNavigation {
+	
+    @BeforeClass
+    public void init() throws Exception {
+        setup();       // Browser open and open the login page
+        validLogin();  // Login only ONCE before all tests
+        Contactlisting();
+    }
+    
+    @Test(priority = 1)
+    public void attachFileFlowTest() throws InterruptedException {
+    	hoverAndClickEmail();
+    }
+    
+    @AfterClass
+    public void teardown() {
+        tearDown();
+    }
+
+}

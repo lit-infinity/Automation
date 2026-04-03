@@ -1,0 +1,264 @@
+package attachFileFromRecord;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Set;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+
+public class ThisRecord extends AttachFromRecordNavigation {
+
+    private final By FileListing         = By.xpath("//div[@class='attach-file-list-container']");
+    private final By Allfilerows         = By.xpath(".//attach-file-list-item[@class='attach-file-list-item']");
+    private final By Filename            = By.xpath(".//div[@class='file-name']");
+    private final By Date                = By.xpath(".//span[@class='meta-item'][1]");
+    private final By Size                = By.xpath(".//span[@class='meta-item'][2]");
+    private final By Uploader            = By.xpath(".//span[@class='meta-item'][3]");
+    private final By emptyStateContainer = By.xpath("//div[@class='empty-state w-full']");
+    private final By emptyStateIcon      = By.xpath("//div[@class='empty-state-icon']");
+    private final By emptyStateTitle     = By.xpath("//h5[@class='empty-state-title']");
+    private final By emptyStateSubText   = By.xpath("//div[contains(text(),'Upload a file to this record')]");
+    private final By downloadIcon = By.xpath(".//button[contains(@class,'action-icon')]");
+    
+    private List<WebElement> allFileRows;
+
+    public void verifyFileListDisplayed() {
+
+        // Step 1 - Check empty state first safely
+        List<WebElement> emptyState = driver.findElements(emptyStateContainer);
+        System.out.println("Empty state count = " + emptyState.size());
+        
+
+        if (emptyState.size() > 0) {
+
+            // -----------------------------------------------
+            // EMPTY STATE VERIFICATION
+            // -----------------------------------------------
+            System.out.println("No files found - verifying empty state");
+
+            // Verify container
+            WebElement container = driver.findElement(emptyStateContainer);
+            Assert.assertTrue(container.isDisplayed(), "Empty state container not visible");
+            System.out.println("Empty state container verified");
+
+            // Verify icon
+            WebElement icon = driver.findElement(emptyStateIcon);
+            Assert.assertTrue(icon.isDisplayed(), "Empty state icon not visible");
+            System.out.println("Empty state icon verified");
+
+            // Verify main title text
+            WebElement mainTitle = driver.findElement(emptyStateTitle);
+            Assert.assertTrue(mainTitle.isDisplayed(), "Empty state title not visible");
+            String mainTitleText = mainTitle.getText().trim();
+            Assert.assertEquals(mainTitleText, "No files found", "Wrong empty state title text");
+            System.out.println("Empty state title verified: " + mainTitleText);
+
+            // Verify sub text
+            WebElement subText = driver.findElement(emptyStateSubText);
+            Assert.assertTrue(subText.isDisplayed(), "Empty state sub text not visible");
+            String subTextContent = subText.getText().trim();
+            Assert.assertEquals(subTextContent, "Upload a file to this record to see it here.", "Wrong sub text");
+            System.out.println("Empty state sub text verified: " + subTextContent);
+
+        } else {
+
+            // -----------------------------------------------
+            // FILE LIST VERIFICATION
+            // -----------------------------------------------
+            System.out.println("Files exist - verifying file list");
+
+            // Find parent container
+            WebElement parentContainer = driver.findElement(FileListing);
+            System.out.println("File list container found");
+
+            // Find all file rows inside parent
+//            List<WebElement> allFileRows = parentContainer.findElements(Allfilerows);
+            allFileRows = parentContainer.findElements(Allfilerows);
+//            int count = allFileRows.size();
+//            System.out.println("Total files found: " + count);
+//            Assert.assertTrue(count > 0, "No file rows found!");
+
+            // Loop through each row
+            for (WebElement rowdata : allFileRows) {
+
+                // -----------------------------------------------
+                // VERIFY FILE ROW DATA
+                // -----------------------------------------------
+
+                WebElement file_name = rowdata.findElement(Filename);
+                WebElement date      = rowdata.findElement(Date);
+                WebElement size      = rowdata.findElement(Size);
+                WebElement uploader  = rowdata.findElement(Uploader);
+
+                String fileNameText = file_name.getText().trim();
+                String dateText     = date.getText().trim();
+                String sizeText     = size.getText().trim();
+                String uploaderText = uploader.getText().trim();
+
+                Assert.assertFalse(fileNameText.isEmpty(), "File name is empty");
+                Assert.assertFalse(dateText.isEmpty(),     "Date is empty");
+                Assert.assertFalse(sizeText.isEmpty(),     "Size is empty");
+                Assert.assertFalse(uploaderText.isEmpty(), "Uploader is empty");
+
+                System.out.println("File Name : " + fileNameText);
+                System.out.println("Date      : " + dateText);
+                System.out.println("Size      : " + sizeText);
+                System.out.println("Uploader  : " + uploaderText);
+                System.out.println("---------------------------");
+
+                // -----------------------------------------------
+                // FILE TYPE ICON VERIFICATION
+                // -----------------------------------------------
+
+                // Step 1 - Extract file extension
+                String extension = "";
+                if (fileNameText.contains(".")) {
+                    extension = fileNameText
+                            .substring(fileNameText.lastIndexOf(".") + 1)
+                            .toLowerCase()
+                            .trim();
+                }
+                System.out.println("File extension = " + extension);
+
+                // Step 2 - Find icon element inside row
+                WebElement iconElement = rowdata.findElement(
+                    By.xpath(".//span[contains(@class,'icon-file-')]"));
+
+                // Step 3 - Get icon class
+                String iconClass = iconElement.getAttribute("class").toLowerCase();
+                System.out.println("Icon class = " + iconClass);
+
+                // Step 4 - Match extension with expected icon
+                switch (extension) {
+
+                    case "pdf":
+                        Assert.assertTrue(iconClass.contains("icon-file-pdf"),
+                            "Wrong icon for PDF: " + fileNameText);
+                        break;
+
+                    case "jpg":
+                    case "jpeg":
+                    case "png":
+                    case "webp":
+                    case "gif":
+                        Assert.assertTrue(iconClass.contains("icon-file-image"),
+                            "Wrong icon for Image: " + fileNameText);
+                        break;
+
+                    case "xlsx":
+                    case "csv":
+                        Assert.assertTrue(iconClass.contains("icon-file-xls"),
+                            "Wrong icon for Spreadsheet: " + fileNameText);
+                        break;
+
+                    case "docx":
+                    case "doc":
+                    case "odt":
+                    case "ods":
+                    case "odp":
+                        Assert.assertTrue(iconClass.contains("icon-file-doc"),
+                            "Wrong icon for Document: " + fileNameText);
+                        break;
+
+                    case "pptx":
+                    case "ppt":
+                        Assert.assertTrue(iconClass.contains("icon-file-ppt"),
+                            "Wrong icon for Presentation: " + fileNameText);
+                        break;
+
+                    default:
+                        System.out.println("Unknown extension: " + extension + " - skipping");
+                        break;
+                }
+
+                System.out.println("Icon verified for: " + fileNameText + " (" + extension + ")");
+                System.out.println("---------------------------");
+            }
+        }
+    }
+    
+    
+    public void verifyDownloadIcon() throws InterruptedException {
+
+        // Find parent container
+        WebElement parentContainer = driver.findElement(FileListing);
+        System.out.println("File list container found");
+
+        allFileRows = parentContainer.findElements(Allfilerows);
+        System.out.println("Total rows found: " + allFileRows.size());
+
+        for (WebElement files : allFileRows) {
+
+            // Find download icon INSIDE current row and store it
+            WebElement downloadBtn = files.findElement(downloadIcon);
+
+            // Verify it is displayed
+            Assert.assertTrue(downloadBtn.isDisplayed(), "Download icon not visible");
+            System.out.println("Download icon verified for row");
+
+            // Step 1 - Get all open tabs before click
+            Set<String> originalTabs = driver.getWindowHandles();
+            int originalCount = originalTabs.size();
+            System.out.println("Tabs before click: " + originalCount);
+
+            // Step 2 - Click download icon
+            downloadBtn.click();
+            System.out.println("Clicked download icon");
+
+            // Step 3 - Wait for new tab to open
+            WebDriverWait tabWait = new WebDriverWait(driver, Duration.ofSeconds(30));
+            tabWait.until(ExpectedConditions.numberOfWindowsToBe(originalCount + 1));
+            System.out.println("New tab opened successfully");
+
+            // Step 4 - Confirm new tab opened and switch to it
+            Set<String> newTabs = driver.getWindowHandles();
+            Assert.assertEquals(newTabs.size(), originalCount + 1, "New tab did not open!");
+            System.out.println("Total tabs after click: " + newTabs.size());
+
+            String newTabHandle = "";
+            for (String tab : newTabs) {
+                if (!originalTabs.contains(tab)) {
+                    newTabHandle = tab;
+                    break;
+                }
+            }
+            driver.switchTo().window(newTabHandle);
+            System.out.println("Switched to new tab");
+
+            // Step 5 - Wait for URL to fully load in new tab
+            tabWait.until(ExpectedConditions.not(
+                ExpectedConditions.urlToBe("about:blank")
+            ));
+            tabWait.until(driver -> !driver.getCurrentUrl().equals("about:blank")
+                && !driver.getCurrentUrl().isEmpty());
+
+            // Step 6 - Verify URL
+            String newTabURL = driver.getCurrentUrl();
+            Assert.assertFalse(newTabURL.isEmpty(), "New tab URL is empty");
+            Assert.assertFalse(newTabURL.equals("about:blank"), "File did not load in new tab");
+            System.out.println("File opened in new tab URL: " + newTabURL);
+
+            // Step 7 - Wait for file to fully load then close
+            Thread.sleep(3000);
+            driver.close();
+            System.out.println("Closed new tab");
+
+            // Step 8 - Switch back to original tab
+            String originalHandle = originalTabs.iterator().next();
+            driver.switchTo().window(originalHandle);
+            System.out.println("Switched back to original tab");
+            Thread.sleep(2000);
+
+            // Click only first file
+            break;
+        }
+    }
+    
+    public void verifyPreviewIcon() {
+    	
+    }
+   }

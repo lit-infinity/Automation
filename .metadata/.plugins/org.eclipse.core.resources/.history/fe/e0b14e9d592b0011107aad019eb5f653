@@ -1,0 +1,21 @@
+package testcontact;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+import contact.contactlisting;
+
+public class testcontactlisting extends contactlisting {
+
+    @BeforeClass
+    public void init() throws Exception {
+        setup();       // Browser open and open the login page
+        validLogin();  // Login only ONCE before all tests
+    }
+
+   
+    @AfterClass
+    public void teardown() {
+        tearDown();
+    }
+}

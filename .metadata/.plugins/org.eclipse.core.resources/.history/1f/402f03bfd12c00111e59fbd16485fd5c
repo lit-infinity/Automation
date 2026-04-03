@@ -1,0 +1,92 @@
+package attachFileFromRecord;
+
+import java.time.Duration;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+
+import contact.contactlisting;
+
+public class AttachFromRecordNavigation extends contactlisting {
+	
+	private final By Email =By.xpath("(//a[@title='Click to send email'])[1]");
+	private final By Attachicon = By.xpath("//button[@id='attachFiles-1']");
+	private final By Addfilefromrecord = By.xpath("//a[contains(text(),'Attach files from record')]");	
+	
+	
+	//button[@id='attachFiles-1']
+	//button[@data-cmd='attachFiles']
+	//button[@data-title='Attach Files']
+	
+	protected WebDriverWait wait;
+	public AttachFromRecordNavigation() {
+        wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+    }
+
+	
+	public void hoverAndClickEmail() throws InterruptedException {
+
+	    WebElement Emailadd = driver.findElement(Email);
+	    Thread.sleep(500);
+	    Emailadd.click();
+	    System.out.println("Clicked on the email address");
+	    Thread.sleep(2000);
+
+	 // Print element at attach button's exact screen coordinates
+	    WebElement attachicon = driver.findElement(Attachicon);
+
+	    String debug = (String) ((JavascriptExecutor) driver).executeScript(
+	        "var rect = arguments[0].getBoundingClientRect();" +
+	        "var centerX = rect.left + rect.width/2;" +
+	        "var centerY = rect.top + rect.height/2;" +
+	        "var topEl = document.elementFromPoint(centerX, centerY);" +
+	        "return 'Button rect: ' + JSON.stringify(rect.toJSON()) + " +
+	        "' || Top element: ' + topEl.tagName + " +
+	        "' | id=' + topEl.id + " +
+	        "' | class=' + topEl.className + " +
+	        "' | same as button? ' + (topEl === arguments[0]);",
+	        attachicon
+	    );
+	    System.out.println(debug);
+	}
+
+	
+	
+	public void clickAttachIcon() {
+//		waiting for attach icon visibility
+		wait.until(ExpectedConditions.elementToBeClickable(Attachicon));
+		System.out.println("found the attachicon");
+		
+		// JavaScript click for reliability
+        WebElement attachBtn = driver.findElement(Attachicon);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", attachBtn);
+        System.out.println("Clicked the attach icon");
+		
+//		click the attach icon
+		
+//		driver.findElement(Attachicon).click();
+//		System.out.println("clicked the attach icon");
+		
+//		wait till Addfilefromrecord option is visible
+		
+		wait.until(ExpectedConditions.visibilityOfElementLocated(Addfilefromrecord));
+		System.out.println("found the element attachfilefrom record");
+		
+//		click the attachfile from record option
+		
+		driver.findElement(Addfilefromrecord).click();
+		System.out.println("clicked Addfilefromrecord successfully");
+		
+	}
+	
+	
+
+	  	
+
+}

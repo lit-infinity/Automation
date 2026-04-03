@@ -1,0 +1,40 @@
+package testcontact;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+import contact.contactlisting;
+
+public class testcontactlisting extends contactlisting {
+
+    @BeforeClass
+    public void init() throws Exception {
+        setup();       // Browser open and open the login page
+        validLogin();  // Login only ONCE before all tests
+    }
+    
+    @Test(priority = 1)
+    public void contactlistingnavigation() throws InterruptedException {
+        Contactlisting();
+    }
+    
+    @Test(priority = 2)
+    public void Editicon() throws InterruptedException {
+    	miniview();
+    }
+    
+    @Test(priority =3)
+    public void editname() {
+    	updatename();
+    }
+    
+    
+
+
+
+   
+    @AfterClass
+    public void teardown() {
+        tearDown();
+    }
+}

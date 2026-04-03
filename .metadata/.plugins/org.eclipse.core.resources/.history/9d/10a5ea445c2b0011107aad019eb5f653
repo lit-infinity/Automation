@@ -1,0 +1,69 @@
+package contact;
+
+import java.awt.RenderingHints.Key;
+import java.time.Duration;
+import java.util.List;
+import java.util.Random;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+
+import Login.Login;
+
+public class contactlisting extends Login {
+	
+//  for daynamic name
+  Random rand = new Random();
+	int num = rand.nextInt(1000);
+	
+  String updatedFirstName ="vanita" + num;
+  String updatedEmail		="vanitapatel"+num+"@gmail.com";
+  String updatePhone		= "+91966453"+num;
+
+
+  protected WebDriverWait wait;
+
+  public void Contactlisting() throws InterruptedException {
+      wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+      driver.findElement(Contactmodule).click();
+		System.out.println("Clicked contact module");
+
+		    // Wait until New button is visible and clickable
+		wait.until(ExpectedConditions.elementToBeClickable(ContactName));
+		System.out.println("Contact module loaded successfully - firstname is visible");
+
+  	}
+  	
+
+  public void quickview() throws InterruptedException {
+
+      WebElement contactName = driver.findElement(ContactName);
+      Thread.sleep(500);
+      System.out.println("Contact found: " + contactName.getText());
+
+      // Hover on contact name
+      Actions actions = new Actions(driver);
+      actions.moveToElement(contactName).perform();
+      Thread.sleep(500);
+      System.out.println("Hovered on contact name");
+
+      // Wait for eye icon
+      wait.until(ExpectedConditions.visibilityOfElementLocated(Contacteyeicon));
+      System.out.println("Eye icon visible");
+
+      // Click eye icon
+      driver.findElement(Contacteyeicon).click();;
+      System.out.println("Clicked eye icon");
+
+      // Verify quick view
+      wait.until(ExpectedConditions.visibilityOfElementLocated(Firstname));
+      Thread.sleep(2000);
+      System.out.println("Quick view opened successfully");
+
+}

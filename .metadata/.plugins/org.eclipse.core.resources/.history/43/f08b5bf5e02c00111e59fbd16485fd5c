@@ -1,0 +1,67 @@
+package attachFileFromRecord;
+
+import java.time.Duration;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+
+import contact.contactlisting;
+
+public class AttachFromRecordNavigation extends contactlisting {
+	
+	private final By Email =By.xpath("(//a[@title='Click to send email'])[1]");
+	private final By Attachicon = By.xpath("//button[@id='attachFiles-1']");
+	private final By Addfilefromrecord = By.xpath("//*[contains(text(),'Attach files from record')]");	
+	
+	
+	//button[@id='attachFiles-1']
+	//button[@data-cmd='attachFiles']
+	//button[@data-title='Attach Files']
+	
+	protected WebDriverWait wait;
+	public AttachFromRecordNavigation() {
+        wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+    }
+
+	
+	public void hoverAndClickEmail() throws InterruptedException {
+
+	    WebElement Emailadd = driver.findElement(Email);
+	    Thread.sleep(500);
+	    Emailadd.click();
+	    System.out.println("Clicked on the email address");
+	    Thread.sleep(2000);
+
+	 // Find attach icon and click via SVG child
+	    WebElement attachicon = driver.findElement(Attachicon);
+	    WebElement svgInsideBtn = attachicon.findElement(By.tagName("svg"));
+	    svgInsideBtn.click();
+	    System.out.println("Clicked the attach icon");
+	 }
+	
+
+	
+	
+	public void clickAttachIcon() throws InterruptedException {
+		
+		wait.until(ExpectedConditions.visibilityOfElementLocated(Addfilefromrecord));
+		System.out.println("Attachfile from the record option is displayed");
+		
+		driver.findElement(Addfilefromrecord).click();
+		System.out.println("Clicked the Attachfile from record and redirected to attached record");
+		Thread.sleep(3000);
+		
+		
+	}
+	
+	
+
+	  	
+
+}

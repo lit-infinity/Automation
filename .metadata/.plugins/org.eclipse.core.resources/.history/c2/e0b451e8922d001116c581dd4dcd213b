@@ -1,0 +1,31 @@
+package attachFileFromRecord;
+
+import java.time.Duration;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class ThisRecord extends AttachFromRecordNavigation{
+	
+	private final By FileListing = By.xpath("//div[@class='attach-file-list-container']");
+	
+	protected WebDriverWait wait;
+	public ThisRecord() {
+        wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+    }
+	
+	public void verifyFileListDisplayed() {
+		
+		WebElement filelist =driver.findElement(FileListing);
+		System.out.println("find the filelist element");
+	
+		System.out.println("total size "+ filelist.getSize());
+		
+		
+	}
+
+	
+	
+
+}

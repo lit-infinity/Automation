@@ -1,0 +1,22 @@
+package Base;
+
+import java.io.File;
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+
+//Base/ScreenshotUtil.java
+public class ScreenshotUtil {
+
+ public static void takeScreenshot(WebDriver driver, String testName) {
+     TakesScreenshot ts = (TakesScreenshot) driver;
+     File src = ts.getScreenshotAs(OutputType.FILE);
+     String path = System.getProperty("user.dir") 
+                   + "/test-output/screenshots/" + testName + "_" 
+                   + System.currentTimeMillis() + ".png";
+     File dest = new File(path);
+     FileUtils.copyFile(src, dest);
+ }
+}
